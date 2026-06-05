@@ -55,3 +55,27 @@ static void readExcel(String filePath) throws Exception {
 		users.clear();
 		users.addAll(userMap.values());
 	}
+
+
+
+	static String getToken() throws Exception {
+
+		URL url = new URL(baseUrl + "/authentication/login");
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+		con.setRequestMethod("POST");
+		con.setRequestProperty("Content-Type", "application/json");
+		con.setDoOutput(true);
+
+		String body = "{" + "\"username\":\"" + username + "\"," + "\"password\":\"" + password + "\"" + "}";
+
+		write(con, body);
+
+		String response = read(con);
+
+		if (!response.contains("access_token")) {
+			throw new RuntimeException("Login failed: " + response);
+		}
+
+		return response.split("\"access_token\":\"")[1].split("\"")[0];
+	}
